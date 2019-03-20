@@ -1,0 +1,6 @@
+
+botconfig.json
+.DS_Store
+data.db
+node_modules/*
+.latestActivityID
