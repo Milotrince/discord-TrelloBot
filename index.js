@@ -1,14 +1,14 @@
 console.log(`                                                                         
 ._____        _ _     _____     _   
 |_   _|__ ___| | |___| __  |___| |_ 
-  | ||  _| -_| | | . | __ -| . |  _|
-  |_||_| |___|_|_|___|_____|___|_|  
+..| ||  _| -_| | | . | __ -| . |  _|
+..|_||_| |___|_|_|___|_____|___|_|  
                                     
 `)
 
 require('dotenv').config()
 const Discord = require('discord.js')
-const Trello = require('trello-events')
+const Trello = require('./utils/trello-events')
 const fs = require('fs')
 const sqlite = require('sqlite3')
 const db = new sqlite.Database('./data.db', (err) => {
@@ -18,7 +18,7 @@ const db = new sqlite.Database('./data.db', (err) => {
 
 const Client = {
     bot: new Discord.Client(),
-    trello: new Trello(),
+    trello: null,
     config: require('./config.json'),
     commands: {},
     log: (msg) => {
@@ -46,7 +46,7 @@ const Client = {
             }
         }
     },
-    loadBoards: () => {
+    loadTrello: () => {
         let boardIDs = []
 
         db.all(`SELECT * FROM boards`, [], (err, boards) => {
@@ -70,7 +70,7 @@ const Client = {
                 } 
             })
 
-            loadTrelloListeners()
+            loadTrelloListeners(Client.trello)
             Client.trello.start()
 
         })
@@ -103,7 +103,7 @@ Client.bot.on('ready', () => {
         suppressEvents BOOLEAN)`, [], (err) => {
             if (err) Client.log(err.message)}
     )
-    Client.loadBoards();
+    Client.loadTrello();
 
     console.log(`${Client.bot.user.username} is online!`)
     Client.bot.user.setActivity('with sticky notes', {type: 'PLAYING'})
@@ -149,10 +149,10 @@ Client.bot.on('message', async (message) => {
 
 
 // ========== TRELLO ==========
-function loadTrelloListeners() {
+function loadTrelloListeners(trello) {
 
     // Fired when a card is created
-    Client.trello.on('createCard', (event, board) => {
+    trello.on('createCard', (event, board) => {
         let embed = generateEmbed(event)
 
             .setTitle(`New card created`)
@@ -164,7 +164,7 @@ function loadTrelloListeners() {
 
     // Fired when a card is updated (description, due date, position,
     // associated list, name, and archive status)
-    Client.trello.on('updateCard', (event, board) => {
+    trello.on('updateCard', (event, board) => {
         let embed = generateEmbed(event)
 
         if (event.data.old.hasOwnProperty("desc")) {
@@ -233,7 +233,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a card is deleted
-    Client.trello.on('deleteCard', (event, board) => {
+    trello.on('deleteCard', (event, board) => {
 
         let embed = generateEmbed(event)
             .setTitle(`Card deleted`)
@@ -244,7 +244,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a comment is posted, or edited
-    Client.trello.on('commentCard', (event, board) => {
+    trello.on('commentCard', (event, board) => {
         let embed = generateEmbed(event)
 
         if (event.data.hasOwnProperty("textData")) {
@@ -265,7 +265,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a member is added to a card
-    Client.trello.on('addMemberToCard', (event, board) => {
+    trello.on('addMemberToCard', (event, board) => {
         let embed = generateEmbed(event)
             .setTitle(`Member added to card`)
             .setDescription(
@@ -276,7 +276,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a member is removed from a card
-    Client.trello.on('removeMemberFromCard', (event, board) => {
+    trello.on('removeMemberFromCard', (event, board) => {
         let embed = generateEmbed(event)
             .setTitle(`Member removed from card`)
             .setDescription(
@@ -287,7 +287,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a list is created
-    Client.trello.on('createList', (event, board) => {
+    trello.on('createList', (event, board) => {
 
         let embed = generateEmbed(event)
             .setTitle(`New list created`)
@@ -297,7 +297,7 @@ function loadTrelloListeners() {
 
 
     // Fired when a list is renamed, moved, archived, or unarchived
-    Client.trello.on('updateList', (event, board) => {
+    trello.on('updateList', (event, board) => {
         let embed = generateEmbed(event)
 
         if (event.data.old.hasOwnProperty("pos")) {
@@ -331,7 +331,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when an attachment is added to a card
-    Client.trello.on('addAttachmentToCard', (event, board) => {
+    trello.on('addAttachmentToCard', (event, board) => {
 
         let embed = generateEmbed(event)
             .setTitle(`Attachment added to card`)
@@ -343,7 +343,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when an attachment is removed from a card
-    Client.trello.on('deleteAttachmentFromCard', (event, board) => {
+    trello.on('deleteAttachmentFromCard', (event, board) => {
 
         let embed = generateEmbed(event)
             .setTitle(`Attachment removed from card`)
@@ -354,7 +354,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a checklist is added to a card (same thing as created)
-    Client.trello.on('addChecklistToCard', (event, board) => {
+    trello.on('addChecklistToCard', (event, board) => {
 
         let embed = generateEmbed(event)
             .setTitle(`Checklist added to card`)
@@ -365,7 +365,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a checklist is removed from a card (same thing as deleted)
-    Client.trello.on('removeChecklistFromCard', (event, board) => {
+    trello.on('removeChecklistFromCard', (event, board) => {
 
         let embed = generateEmbed(event)
             .setTitle(`Checklist removed from card`)
@@ -376,7 +376,7 @@ function loadTrelloListeners() {
     })
 
     // Fired when a checklist item's completion status is toggled
-    Client.trello.on('updateCheckItemStateOnCard', (event, board) => {
+    trello.on('updateCheckItemStateOnCard', (event, board) => {
 
         if (event.data.checkItem.state === "complete") {
 
@@ -400,19 +400,16 @@ function loadTrelloListeners() {
         }
     })
 
+
+    trello.on('maxId', (id) => {
+        if (latestActivityID == id) return
+        latestActivityID = id
+        fs.writeFileSync('.latestActivityID', id)
+    })
+
 }
 
 
-/*
-** =======================
-** Miscellaneous functions
-** =======================
-*/
-Client.trello.on('maxId', (id) => {
-    if (latestActivityID == id) return
-    latestActivityID = id
-    fs.writeFileSync('.latestActivityID', id)
-})
 
 function generateEmbed(event) {
     // let link = event.data.hasOwnProperty(`card`) ?
