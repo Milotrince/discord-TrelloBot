@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Send trello events to your discord channel",
   "main": "index.js",
+  "scripts": {
+    "start": "index.js"
+  },
   "dependencies": {
     "discord.js": "^12.2.0",
     "dotenv": "^8.2.0",
