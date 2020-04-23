@@ -1,0 +1,30 @@
+{
+    "pollInterval": 5,
+    "enabledEvents": [
+        "cardCreated",
+        "cardDescriptionChanged",
+        "cardDueDateChanged",
+        "cardListChanged",
+        "cardNameChanged",
+        "cardUnarchived",
+        "cardArchived",
+        "cardDeleted",
+        "commentAdded",
+        "listCreated",
+        "listNameChanged",
+        "listUnarchived",
+        "listArchived",
+        "attachmentAddedToCard",
+        "attachmentRemovedFromCard",
+        "memberAddedToCard",
+        "memberAddedToCardBySelf",
+        "memberRemovedFromCard",
+        "memberRemovedFromCardBySelf",
+        "checklistAddedToCard",
+        "checklistRemovedFromCard",
+        "checklistItemMarkedComplete",
+        "checklistItemMarkedIncomplete"
+    ],
+
+    "prefix": "t."
+}

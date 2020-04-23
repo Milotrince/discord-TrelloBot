@@ -6,6 +6,7 @@ console.log(`
                                     
 `)
 
+require('dotenv').config()
 const Discord = require('discord.js')
 const Trello = require('trello-events')
 const fs = require('fs')
@@ -18,7 +19,7 @@ const db = new sqlite.Database('./data.db', (err) => {
 const Client = {
     bot: new Discord.Client(),
     trello: new Trello(),
-    config: require('./botconfig.json'),
+    config: require('./config.json'),
     commands: {},
     log: (msg) => {
         let time = (new Date).toLocaleString('en-US') + '\t'
@@ -59,13 +60,13 @@ const Client = {
             console.log(`Loaded ${boardIDs.length} boards.`)
             
             Client.trello = new Trello({
-                pollFrequency: Client.config.pollInterval, // milliseconds
+                pollFrequency: Client.config.pollInterval,
                 minId: latestActivityID, // auto-created and auto-updated
                 start: true,
                 trello: {
-                    boards: boardIDs, // array of Trello board IDs 
-                    key: Client.config.trelloKey, // public Trello API key
-                    token: Client.config.trelloToken // private Trello token for Trellobot
+                    boards: boardIDs,
+                    key: process.env.TRELLO_KEY,
+                    token: process.env.TRELLO_TOKEN
                 } 
             })
 
@@ -92,7 +93,7 @@ let latestActivityID = fs.existsSync('.latestActivityID') ?
 // ========== DISCORD ==========
 
 Client.load()
-Client.bot.login(Client.config.discordToken)
+Client.bot.login(process.env.DISCORD_BOT_TOKEN)
 
 Client.bot.on('ready', () => {
     console.log(`Loading data...`)
