@@ -1,6 +1,6 @@
-# Trellobot
+# TrelloBot
 A Discord bot that can manage multiple Trello boards and notify you of events through Discord.
-See original Trellobot here:  https://github.com/Angush/trellobot
+Modified from this trellobot:  https://github.com/Angush/trellobot
 
 ## Setup
 1. Clone repository.

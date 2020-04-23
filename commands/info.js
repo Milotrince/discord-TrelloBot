@@ -14,7 +14,7 @@ module.exports = {
                 let board = boards.find((b) => {return b.boardID == args[0]})
                 if (!board) return message.channel.send("Invalid board.")
 
-                let embed = new Discord.RichEmbed({
+                let embed = new Discord.MessageEmbed({
                     author: {
                         name: Client.bot.user.username,
                         icon_url: Client.bot.user.displayAvatarURL,
@@ -28,7 +28,7 @@ module.exports = {
                         },
                         {
                             name: `Discord Channel`,
-                            value: message.guild.channels.get(board.channelID).name,
+                            value: message.guild.channels.resolve(board.channelID).name,
                             inline: true
                         },
                         {
@@ -75,7 +75,7 @@ module.exports = {
                             boardIDs.push(boards[i].boardID)
                     }
                     
-                    let embed = new Discord.RichEmbed({
+                    let embed = new Discord.MessageEmbed({
                         author: {
                             name: Client.bot.user.username,
                             icon_url: Client.bot.user.displayAvatarURL,

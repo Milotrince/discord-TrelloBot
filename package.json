@@ -1,17 +1,14 @@
 {
   "name": "discord-trellobot",
   "version": "1.0.0",
-  "description": "send trello events to your discord channel",
+  "description": "Send trello events to your discord channel",
   "main": "index.js",
   "dependencies": {
-    "discord.js": "^11.4.2",
-    "sqlite3": "^4.0.6",
+    "discord.js": "^12.2.0",
+    "sqlite3": "^4.1.1",
     "trello-events": "^0.1.6"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "t.ping"
-  },
   "keywords": [
     "trello"
   ],

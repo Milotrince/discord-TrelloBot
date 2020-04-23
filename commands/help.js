@@ -7,7 +7,7 @@ module.exports = {
     permissions: [],
     func: (Client, message, args) => {
 
-        let embed = new Discord.RichEmbed({
+        let embed = new Discord.MessageEmbed({
             color: 0x026aa7
         })
 
