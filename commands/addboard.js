@@ -27,7 +27,7 @@ module.exports = {
                     [args[0], g.id, c.id, "", Client.config.prefix, Client.config.enabledEvents.join(','), false], (err) => {
                         if (err) Client.log('Error creating board\n' + err.message)
                         else {
-                            Client.loadBoards();
+                            Client.loadTrello();
                             Client.log(`Created: Board{${args[0]}} in Guild{${g.id}}`)
                             message.channel.send("Board successfully created.")
                         }
